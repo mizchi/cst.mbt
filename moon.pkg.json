@@ -1,0 +1,6 @@
+{
+  "import": [
+    "moonbitlang/core/immut/array",
+    "moonbitlang/core/hashmap"
+  ]
+}
