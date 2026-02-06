@@ -72,6 +72,15 @@ fn is_whitespace_char(c : Char) -> Bool {
   c == ' ' || c == '\t'
 }
 
+///|
+fn Lexer::slice_from(self : Lexer, start : Int) -> String {
+  let buf = StringBuilder::new()
+  for i = start; i < self.pos; i = i + 1 {
+    buf.write_char(self.input[i].to_int().unsafe_to_char())
+  }
+  buf.to_string()
+}
+
 ///| Lex a single token
 pub fn Lexer::next_token(self : Lexer) -> Token {
   match self.peek() {
@@ -88,7 +97,7 @@ pub fn Lexer::next_token(self : Lexer) -> Token {
         } {
           let _ = self.advance()
         }
-        let text = self.input.substring(start~, end=self.pos)
+        let text = self.slice_from(start)
         return Token::new(whitespace(), text)
       }
       // Newline
@@ -107,7 +116,7 @@ pub fn Lexer::next_token(self : Lexer) -> Token {
         } {
           let _ = self.advance()
         }
-        let text = self.input.substring(start~, end=self.pos)
+        let text = self.slice_from(start)
         let kind = match text {
           "let" => let_kw()
           "fn" => fn_kw()
@@ -126,7 +135,7 @@ pub fn Lexer::next_token(self : Lexer) -> Token {
         } {
           let _ = self.advance()
         }
-        let text = self.input.substring(start~, end=self.pos)
+        let text = self.slice_from(start)
         return Token::new(number(), text)
       }
       // Single character tokens
