@@ -1,4 +1,5 @@
-///| SyntaxToken - A token in the red tree with navigation capabilities
+///|
+/// SyntaxToken - A token in the red tree with navigation capabilities
 pub(all) struct SyntaxToken {
   green : GreenToken
   parent : SyntaxNode
@@ -9,7 +10,7 @@ pub(all) struct SyntaxToken {
 pub fn SyntaxToken::new(
   green : GreenToken,
   parent : SyntaxNode,
-  offset : TextSize
+  offset : TextSize,
 ) -> SyntaxToken {
   SyntaxToken::{ green, parent, offset }
 }

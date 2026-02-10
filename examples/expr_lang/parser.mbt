@@ -1,6 +1,7 @@
 ///| Parser for expr_lang
 
-///| Parser state
+///|
+/// Parser state
 pub struct Parser {
   tokens : Array[Token]
   mut pos : Int
@@ -12,7 +13,8 @@ pub fn Parser::new(tokens : Array[Token]) -> Parser {
   Parser::{ tokens, pos: 0, builder: @cst.GreenNodeBuilder::new() }
 }
 
-///| Peek current token
+///|
+/// Peek current token
 fn Parser::peek(self : Parser) -> Token {
   if self.pos >= self.tokens.length() {
     Token::new(eof(), "")
@@ -21,31 +23,36 @@ fn Parser::peek(self : Parser) -> Token {
   }
 }
 
-///| Peek token kind
+///|
+/// Peek token kind
 fn Parser::peek_kind(self : Parser) -> @cst.SyntaxKind {
   self.peek().kind()
 }
 
-///| Check if at a specific kind
+///|
+/// Check if at a specific kind
 fn Parser::at(self : Parser, kind : @cst.SyntaxKind) -> Bool {
   self.peek_kind() == kind
 }
 
-///| Advance and emit current token
+///|
+/// Advance and emit current token
 fn Parser::bump(self : Parser) -> Unit {
   let tok = self.peek()
   self.builder.token(tok.kind(), tok.text())
   self.pos += 1
 }
 
-///| Skip whitespace tokens
+///|
+/// Skip whitespace tokens
 fn Parser::skip_trivia(self : Parser) -> Unit {
   while is_trivia(self.peek_kind()) {
     self.bump()
   }
 }
 
-///| Expect and consume a specific token kind
+///|
+/// Expect and consume a specific token kind
 fn Parser::expect(self : Parser, kind : @cst.SyntaxKind) -> Unit {
   self.skip_trivia()
   if self.at(kind) {
@@ -56,7 +63,8 @@ fn Parser::expect(self : Parser, kind : @cst.SyntaxKind) -> Unit {
   }
 }
 
-///| Parse source file
+///|
+/// Parse source file
 pub fn Parser::parse(self : Parser) -> @cst.GreenNode {
   self.builder.start_node(source_file())
   while not(self.at(eof())) {
@@ -70,7 +78,8 @@ pub fn Parser::parse(self : Parser) -> @cst.GreenNode {
   self.builder.finish()
 }
 
-///| Parse a statement
+///|
+/// Parse a statement
 fn Parser::parse_stmt(self : Parser) -> Unit {
   self.skip_trivia()
   match self.peek_kind() {
@@ -80,7 +89,8 @@ fn Parser::parse_stmt(self : Parser) -> Unit {
   }
 }
 
-///| Parse let statement: let NAME = expr
+///|
+/// Parse let statement: let NAME = expr
 fn Parser::parse_let_stmt(self : Parser) -> Unit {
   self.builder.start_node(let_stmt())
   self.bump() // let
@@ -93,7 +103,8 @@ fn Parser::parse_let_stmt(self : Parser) -> Unit {
   self.builder.finish_node()
 }
 
-///| Parse function definition: fn NAME(params) { expr }
+///|
+/// Parse function definition: fn NAME(params) { expr }
 fn Parser::parse_fn_def(self : Parser) -> Unit {
   self.builder.start_node(fn_def())
   self.bump() // fn
@@ -108,16 +119,17 @@ fn Parser::parse_fn_def(self : Parser) -> Unit {
   self.builder.finish_node()
 }
 
-///| Parse parameter list
+///|
+/// Parse parameter list
 fn Parser::parse_params(self : Parser) -> Unit {
   self.builder.start_node(param_list())
   self.skip_trivia()
   if not(self.at(rparen())) {
     self.expect(name()) // first param
-    while {
-      self.skip_trivia()
-      self.at(comma())
-    } {
+    while ({
+            self.skip_trivia()
+            self.at(comma())
+          }) {
       self.bump() // ,
       self.skip_trivia()
       self.expect(name())
@@ -126,7 +138,8 @@ fn Parser::parse_params(self : Parser) -> Unit {
   self.builder.finish_node()
 }
 
-///| Parse block: { expr }
+///|
+/// Parse block: { expr }
 fn Parser::parse_block(self : Parser) -> Unit {
   self.builder.start_node(block())
   self.expect(lbrace()) // {
@@ -139,26 +152,29 @@ fn Parser::parse_block(self : Parser) -> Unit {
   self.builder.finish_node()
 }
 
-///| Parse expression statement
+///|
+/// Parse expression statement
 fn Parser::parse_expr_stmt(self : Parser) -> Unit {
   self.builder.start_node(expr_stmt())
   self.parse_expr()
   self.builder.finish_node()
 }
 
-///| Parse expression (entry point)
+///|
+/// Parse expression (entry point)
 fn Parser::parse_expr(self : Parser) -> Unit {
   self.parse_add_expr()
 }
 
-///| Parse additive expression: mul_expr (('+' | '-') mul_expr)*
+///|
+/// Parse additive expression: mul_expr (('+' | '-') mul_expr)*
 fn Parser::parse_add_expr(self : Parser) -> Unit {
   let checkpoint = self.builder.checkpoint()
   self.parse_mul_expr()
-  while {
-    self.skip_trivia()
-    self.at(plus()) || self.at(minus())
-  } {
+  while ({
+          self.skip_trivia()
+          self.at(plus()) || self.at(minus())
+        }) {
     self.builder.start_node_at(checkpoint, binary_expr())
     self.bump() // + or -
     self.skip_trivia()
@@ -167,14 +183,15 @@ fn Parser::parse_add_expr(self : Parser) -> Unit {
   }
 }
 
-///| Parse multiplicative expression: call_expr (('*' | '/') call_expr)*
+///|
+/// Parse multiplicative expression: call_expr (('*' | '/') call_expr)*
 fn Parser::parse_mul_expr(self : Parser) -> Unit {
   let checkpoint = self.builder.checkpoint()
   self.parse_call_expr()
-  while {
-    self.skip_trivia()
-    self.at(star()) || self.at(slash())
-  } {
+  while ({
+          self.skip_trivia()
+          self.at(star()) || self.at(slash())
+        }) {
     self.builder.start_node_at(checkpoint, binary_expr())
     self.bump() // * or /
     self.skip_trivia()
@@ -183,7 +200,8 @@ fn Parser::parse_mul_expr(self : Parser) -> Unit {
   }
 }
 
-///| Parse call expression: primary_expr ('(' args? ')')?
+///|
+/// Parse call expression: primary_expr ('(' args? ')')?
 fn Parser::parse_call_expr(self : Parser) -> Unit {
   let checkpoint = self.builder.checkpoint()
   self.parse_primary_expr()
@@ -197,16 +215,17 @@ fn Parser::parse_call_expr(self : Parser) -> Unit {
   }
 }
 
-///| Parse argument list
+///|
+/// Parse argument list
 fn Parser::parse_args(self : Parser) -> Unit {
   self.builder.start_node(arg_list())
   self.skip_trivia()
   if not(self.at(rparen())) {
     self.parse_expr() // first arg
-    while {
-      self.skip_trivia()
-      self.at(comma())
-    } {
+    while ({
+            self.skip_trivia()
+            self.at(comma())
+          }) {
       self.bump() // ,
       self.skip_trivia()
       self.parse_expr()
@@ -215,7 +234,8 @@ fn Parser::parse_args(self : Parser) -> Unit {
   self.builder.finish_node()
 }
 
-///| Parse primary expression: NAME | NUMBER | '(' expr ')'
+///|
+/// Parse primary expression: NAME | NUMBER | '(' expr ')'
 fn Parser::parse_primary_expr(self : Parser) -> Unit {
   self.skip_trivia()
   match self.peek_kind() {
@@ -250,7 +270,8 @@ fn Parser::parse_primary_expr(self : Parser) -> Unit {
   }
 }
 
-///| Parse input string and return CST
+///|
+/// Parse input string and return CST
 pub fn parse(input : String) -> @cst.SyntaxNode {
   let tokens = tokenize(input)
   let parser = Parser::new(tokens)

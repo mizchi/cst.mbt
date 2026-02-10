@@ -1,6 +1,7 @@
 ///| Lexer for expr_lang
 
-///| Token produced by the lexer
+///|
+/// Token produced by the lexer
 pub struct Token {
   kind : @cst.SyntaxKind
   text : String
@@ -21,7 +22,8 @@ pub fn Token::text(self : Token) -> String {
   self.text
 }
 
-///| Lexer state
+///|
+/// Lexer state
 pub struct Lexer {
   input : String
   mut pos : Int
@@ -81,7 +83,8 @@ fn Lexer::slice_from(self : Lexer, start : Int) -> String {
   buf.to_string()
 }
 
-///| Lex a single token
+///|
+/// Lex a single token
 pub fn Lexer::next_token(self : Lexer) -> Token {
   match self.peek() {
     None => Token::new(eof(), "")
@@ -89,12 +92,10 @@ pub fn Lexer::next_token(self : Lexer) -> Token {
       // Whitespace (not newline)
       if is_whitespace_char(c) {
         let start = self.pos
-        while {
-          match self.peek() {
-            Some(ch) => is_whitespace_char(ch)
-            None => false
-          }
-        } {
+        while (match self.peek() {
+                Some(ch) => is_whitespace_char(ch)
+                None => false
+              }) {
           let _ = self.advance()
         }
         let text = self.slice_from(start)
@@ -108,12 +109,10 @@ pub fn Lexer::next_token(self : Lexer) -> Token {
       // Identifiers and keywords
       if is_alpha(c) {
         let start = self.pos
-        while {
-          match self.peek() {
-            Some(ch) => is_alnum(ch)
-            None => false
-          }
-        } {
+        while (match self.peek() {
+                Some(ch) => is_alnum(ch)
+                None => false
+              }) {
           let _ = self.advance()
         }
         let text = self.slice_from(start)
@@ -127,12 +126,10 @@ pub fn Lexer::next_token(self : Lexer) -> Token {
       // Numbers
       if is_digit(c) {
         let start = self.pos
-        while {
-          match self.peek() {
-            Some(ch) => is_digit(ch)
-            None => false
-          }
-        } {
+        while (match self.peek() {
+                Some(ch) => is_digit(ch)
+                None => false
+              }) {
           let _ = self.advance()
         }
         let text = self.slice_from(start)
@@ -157,12 +154,14 @@ pub fn Lexer::next_token(self : Lexer) -> Token {
   }
 }
 
-///| Check if lexer is at end
+///|
+/// Check if lexer is at end
 pub fn Lexer::is_eof(self : Lexer) -> Bool {
   self.pos >= self.input.length()
 }
 
-///| Tokenize entire input
+///|
+/// Tokenize entire input
 pub fn tokenize(input : String) -> Array[Token] {
   let lexer = Lexer::new(input)
   let tokens : Array[Token] = []

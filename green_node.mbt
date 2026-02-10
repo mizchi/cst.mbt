@@ -1,4 +1,5 @@
-///| GreenChild - Child element in a green node (either node or token)
+///|
+/// GreenChild - Child element in a green node (either node or token)
 pub(all) enum GreenChild {
   Node(rel_offset~ : TextSize, node~ : GreenNode)
   Token(rel_offset~ : TextSize, token~ : GreenToken)
@@ -28,7 +29,8 @@ pub fn GreenChild::kind(self : GreenChild) -> SyntaxKind {
   }
 }
 
-///| GreenNode - Immutable composite node in the green tree
+///|
+/// GreenNode - Immutable composite node in the green tree
 /// Contains syntax kind, total text length, and children
 pub(all) struct GreenNode {
   kind : SyntaxKind
@@ -39,7 +41,7 @@ pub(all) struct GreenNode {
 ///|
 pub fn GreenNode::new(
   kind : SyntaxKind,
-  children : @array.T[GreenChild]
+  children : @array.T[GreenChild],
 ) -> GreenNode {
   let mut text_len = TextSize::zero()
   for child in children {

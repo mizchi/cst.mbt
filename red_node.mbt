@@ -1,11 +1,13 @@
-///| SyntaxData - Internal data for red tree nodes
+///|
+/// SyntaxData - Internal data for red tree nodes
 pub(all) struct SyntaxData {
   green : GreenNode
   parent : SyntaxNode?
   offset : TextSize
 } derive(Eq, Show)
 
-///| SyntaxNode - A node in the red tree with navigation capabilities
+///|
+/// SyntaxNode - A node in the red tree with navigation capabilities
 /// Provides absolute positions and parent references
 pub(all) struct SyntaxNode {
   data : SyntaxData
@@ -22,11 +24,9 @@ pub fn SyntaxNode::new_root(green : GreenNode) -> SyntaxNode {
 fn SyntaxNode::new_child(
   green : GreenNode,
   parent : SyntaxNode,
-  offset : TextSize
+  offset : TextSize,
 ) -> SyntaxNode {
-  SyntaxNode::{
-    data: SyntaxData::{ green, parent: Some(parent), offset },
-  }
+  SyntaxNode::{ data: SyntaxData::{ green, parent: Some(parent), offset } }
 }
 
 ///|
@@ -54,7 +54,8 @@ pub fn SyntaxNode::green(self : SyntaxNode) -> GreenNode {
   self.data.green
 }
 
-///| Collect all children (nodes and tokens) as array
+///|
+/// Collect all children (nodes and tokens) as array
 pub fn SyntaxNode::children(self : SyntaxNode) -> Array[SyntaxElement] {
   let green_children = self.data.green.children()
   let base_offset = self.data.offset
@@ -77,7 +78,8 @@ pub fn SyntaxNode::children(self : SyntaxNode) -> Array[SyntaxElement] {
   result
 }
 
-///| Collect child nodes only
+///|
+/// Collect child nodes only
 pub fn SyntaxNode::child_nodes(self : SyntaxNode) -> Array[SyntaxNode] {
   let result : Array[SyntaxNode] = []
   for child in self.children() {
@@ -89,7 +91,8 @@ pub fn SyntaxNode::child_nodes(self : SyntaxNode) -> Array[SyntaxNode] {
   result
 }
 
-///| Collect child tokens only
+///|
+/// Collect child tokens only
 pub fn SyntaxNode::child_tokens(self : SyntaxNode) -> Array[SyntaxToken] {
   let result : Array[SyntaxToken] = []
   for child in self.children() {
@@ -101,7 +104,8 @@ pub fn SyntaxNode::child_tokens(self : SyntaxNode) -> Array[SyntaxToken] {
   result
 }
 
-///| Get child at index
+///|
+/// Get child at index
 pub fn SyntaxNode::child_at(self : SyntaxNode, index : Int) -> SyntaxElement? {
   let green_children = self.data.green.children()
   if index < 0 || index >= green_children.length() {
@@ -121,17 +125,20 @@ pub fn SyntaxNode::child_at(self : SyntaxNode, index : Int) -> SyntaxElement? {
   }
 }
 
-///| Get number of children
+///|
+/// Get number of children
 pub fn SyntaxNode::children_count(self : SyntaxNode) -> Int {
   self.data.green.children_count()
 }
 
-///| Get first child
+///|
+/// Get first child
 pub fn SyntaxNode::first_child(self : SyntaxNode) -> SyntaxElement? {
   self.child_at(0)
 }
 
-///| Get last child
+///|
+/// Get last child
 pub fn SyntaxNode::last_child(self : SyntaxNode) -> SyntaxElement? {
   let count = self.children_count()
   if count == 0 {
@@ -141,7 +148,8 @@ pub fn SyntaxNode::last_child(self : SyntaxNode) -> SyntaxElement? {
   }
 }
 
-///| Get first child node
+///|
+/// Get first child node
 pub fn SyntaxNode::first_child_node(self : SyntaxNode) -> SyntaxNode? {
   let nodes = self.child_nodes()
   if nodes.is_empty() {
@@ -151,7 +159,8 @@ pub fn SyntaxNode::first_child_node(self : SyntaxNode) -> SyntaxNode? {
   }
 }
 
-///| Get first child token
+///|
+/// Get first child token
 pub fn SyntaxNode::first_child_token(self : SyntaxNode) -> SyntaxToken? {
   let tokens = self.child_tokens()
   if tokens.is_empty() {

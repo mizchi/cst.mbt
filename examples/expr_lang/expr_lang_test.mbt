@@ -1,4 +1,5 @@
-///| Tests for expr_lang
+///|
+/// Tests for expr_lang
 
 // Lexer tests
 test "lexer: tokenize simple expression" {
@@ -14,6 +15,7 @@ test "lexer: tokenize simple expression" {
   assert_eq(tokens[5].kind(), eof())
 }
 
+///|
 test "lexer: tokenize let statement" {
   let tokens = tokenize("let x = 1")
   assert_eq(tokens[0].kind(), let_kw())
@@ -23,6 +25,7 @@ test "lexer: tokenize let statement" {
   assert_eq(tokens[4].kind(), eq())
 }
 
+///|
 test "lexer: tokenize function definition" {
   let tokens = tokenize("fn add(a, b) { a + b }")
   assert_eq(tokens[0].kind(), fn_kw())
@@ -31,6 +34,7 @@ test "lexer: tokenize function definition" {
   assert_eq(tokens[3].kind(), lparen())
 }
 
+///|
 test "lexer: tokenize operators" {
   let tokens = tokenize("+-*/")
   assert_eq(tokens[0].kind(), plus())
@@ -40,6 +44,8 @@ test "lexer: tokenize operators" {
 }
 
 // Parser tests
+
+///|
 test "parser: parse simple expression" {
   let cst = parse("1 + 2")
   assert_eq(cst.kind(), source_file())
@@ -48,6 +54,7 @@ test "parser: parse simple expression" {
   assert_eq(children[0].kind(), expr_stmt())
 }
 
+///|
 test "parser: parse let statement" {
   let cst = parse("let x = 1 + 2")
   assert_eq(cst.kind(), source_file())
@@ -56,6 +63,7 @@ test "parser: parse let statement" {
   assert_eq(children[0].kind(), let_stmt())
 }
 
+///|
 test "parser: parse function definition" {
   let cst = parse("fn add(a, b) { a + b }")
   assert_eq(cst.kind(), source_file())
@@ -64,17 +72,20 @@ test "parser: parse function definition" {
   assert_eq(children[0].kind(), fn_def())
 }
 
+///|
 test "parser: parse binary expression precedence" {
   // 1 + 2 * 3 should parse as 1 + (2 * 3)
   let cst = parse("1 + 2 * 3")
   assert_eq(cst.kind(), source_file())
 }
 
+///|
 test "parser: parse parenthesized expression" {
   let cst = parse("(1 + 2) * 3")
   assert_eq(cst.kind(), source_file())
 }
 
+///|
 test "parser: parse function call" {
   let cst = parse("add(1, 2)")
   assert_eq(cst.kind(), source_file())
@@ -86,6 +97,8 @@ test "parser: parse function call" {
 }
 
 // Formatter tests
+
+///|
 test "formatter: add spaces around binary operators" {
   assert_eq(format("1+2"), "1 + 2")
   assert_eq(format("1-2"), "1 - 2")
@@ -93,24 +106,29 @@ test "formatter: add spaces around binary operators" {
   assert_eq(format("1/2"), "1 / 2")
 }
 
+///|
 test "formatter: normalize multiple spaces" {
   assert_eq(format("1  +  2"), "1 + 2")
 }
 
+///|
 test "formatter: format let statement" {
   assert_eq(format("let x=1+2"), "let x = 1 + 2")
   assert_eq(format("let  x  =  1"), "let x = 1")
 }
 
+///|
 test "formatter: format function call with comma spacing" {
   assert_eq(format("add(a,b,c)"), "add(a, b, c)")
   assert_eq(format("add(a , b , c)"), "add(a, b, c)")
 }
 
+///|
 test "formatter: remove extra spaces in parentheses" {
   assert_eq(format("( 1 + 2 )"), "(1 + 2)")
 }
 
+///|
 test "formatter: format function definition with block" {
   let input = "fn add(a,b){a+b}"
   let output = format(input)
@@ -119,6 +137,7 @@ test "formatter: format function definition with block" {
   assert_true(output.contains("a + b"))
 }
 
+///|
 test "formatter: preserve structure after formatting" {
   let input = "let x=1+2"
   let formatted = format(input)
@@ -128,12 +147,14 @@ test "formatter: preserve structure after formatting" {
   assert_eq(formatted, reformatted)
 }
 
+///|
 test "formatter: complex expression" {
   let input = "1+2*3"
   let output = format(input)
   assert_eq(output, "1 + 2 * 3")
 }
 
+///|
 test "formatter: parenthesized expression" {
   let input = "(1+2)*3"
   let output = format(input)
