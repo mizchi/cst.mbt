@@ -1,0 +1,114 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "mizchi/cst/examples/expr_lang"
+
+import {
+  "mizchi/cst",
+}
+
+// Values
+pub fn arg_list() -> @cst.SyntaxKind
+
+pub fn binary_expr() -> @cst.SyntaxKind
+
+pub fn block() -> @cst.SyntaxKind
+
+pub fn call_expr() -> @cst.SyntaxKind
+
+pub fn comma() -> @cst.SyntaxKind
+
+pub fn eof() -> @cst.SyntaxKind
+
+pub fn eq() -> @cst.SyntaxKind
+
+pub fn error_kind() -> @cst.SyntaxKind
+
+pub fn expr_stmt() -> @cst.SyntaxKind
+
+pub fn fn_def() -> @cst.SyntaxKind
+
+pub fn fn_kw() -> @cst.SyntaxKind
+
+pub fn format(String) -> String
+
+pub fn is_token(@cst.SyntaxKind) -> Bool
+
+pub fn is_trivia(@cst.SyntaxKind) -> Bool
+
+pub fn kind_name(@cst.SyntaxKind) -> String
+
+pub fn lbrace() -> @cst.SyntaxKind
+
+pub fn let_kw() -> @cst.SyntaxKind
+
+pub fn let_stmt() -> @cst.SyntaxKind
+
+pub fn literal() -> @cst.SyntaxKind
+
+pub fn lparen() -> @cst.SyntaxKind
+
+pub fn minus() -> @cst.SyntaxKind
+
+pub fn name() -> @cst.SyntaxKind
+
+pub fn name_ref() -> @cst.SyntaxKind
+
+pub fn newline() -> @cst.SyntaxKind
+
+pub fn number() -> @cst.SyntaxKind
+
+pub fn param_list() -> @cst.SyntaxKind
+
+pub fn paren_expr() -> @cst.SyntaxKind
+
+pub fn parse(String) -> @cst.SyntaxNode
+
+pub fn plus() -> @cst.SyntaxKind
+
+pub fn rbrace() -> @cst.SyntaxKind
+
+pub fn rparen() -> @cst.SyntaxKind
+
+pub fn slash() -> @cst.SyntaxKind
+
+pub fn source_file() -> @cst.SyntaxKind
+
+pub fn star() -> @cst.SyntaxKind
+
+pub fn tokenize(String) -> Array[Token]
+
+pub fn whitespace() -> @cst.SyntaxKind
+
+// Errors
+
+// Types and methods
+pub struct Lexer {
+  input : String
+  mut pos : Int
+}
+pub fn Lexer::is_eof(Self) -> Bool
+pub fn Lexer::new(String) -> Self
+pub fn Lexer::next_token(Self) -> Token
+pub impl Show for Lexer
+
+pub struct Parser {
+  tokens : Array[Token]
+  mut pos : Int
+  builder : @cst.GreenNodeBuilder
+}
+pub fn Parser::new(Array[Token]) -> Self
+pub fn Parser::parse(Self) -> @cst.GreenNode
+
+pub struct Token {
+  kind : @cst.SyntaxKind
+  text : String
+}
+pub fn Token::kind(Self) -> @cst.SyntaxKind
+pub fn Token::new(@cst.SyntaxKind, String) -> Self
+pub fn Token::text(Self) -> String
+pub impl Eq for Token
+pub impl Show for Token
+
+// Type aliases
+
+// Traits
+

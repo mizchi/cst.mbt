@@ -1,0 +1,7 @@
+import {
+  "mizchi/cst/examples/expr_lang",
+}
+
+options(
+  "is-main": true,
+)

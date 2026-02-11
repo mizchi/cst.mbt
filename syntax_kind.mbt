@@ -1,4 +1,5 @@
-///| SyntaxKind - Language-agnostic syntax element identifier
+///|
+/// SyntaxKind - Language-agnostic syntax element identifier
 /// Wraps a UInt16 for efficient storage and comparison
 pub(all) struct SyntaxKind {
   raw : UInt
@@ -15,7 +16,10 @@ pub fn SyntaxKind::raw(self : SyntaxKind) -> UInt {
 }
 
 ///|
-pub impl Compare for SyntaxKind with compare(self : SyntaxKind, other : SyntaxKind) -> Int {
+pub impl Compare for SyntaxKind with compare(
+  self : SyntaxKind,
+  other : SyntaxKind,
+) -> Int {
   if self.raw < other.raw {
     -1
   } else if self.raw > other.raw {
@@ -26,6 +30,7 @@ pub impl Compare for SyntaxKind with compare(self : SyntaxKind, other : SyntaxKi
 }
 
 // Common syntax kinds used across languages
+
 ///|
 pub fn SyntaxKind::eof() -> SyntaxKind {
   SyntaxKind::{ raw: 0 }

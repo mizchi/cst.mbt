@@ -18,7 +18,7 @@ moon add mizchi/cst
 
 ## Quick Start
 
-```moonbit
+```moonbit nocheck
 // Define syntax kinds for your language
 let ROOT = @cst.SyntaxKind::new(1)
 let IDENT = @cst.SyntaxKind::new(2)
@@ -63,7 +63,7 @@ The green tree stores structure without positions. The red tree wraps it to prov
 
 ### Building Trees
 
-```moonbit
+```moonbit nocheck
 let builder = @cst.GreenNodeBuilder::new()
 
 // Basic: start/finish nodes, add tokens
@@ -83,7 +83,7 @@ builder.finish_node()
 
 ### Navigating Trees
 
-```moonbit
+```moonbit nocheck
 let root = @cst.SyntaxNode::new_root(green)
 
 root.kind()              // SyntaxKind
@@ -99,7 +99,7 @@ root.child_at(i)         // SyntaxElement?
 
 ### Text Primitives
 
-```moonbit
+```moonbit nocheck
 let size = @cst.TextSize::new(5)     // UTF-8 byte offset
 let range = @cst.TextRange::new(     // [start, end) span
   @cst.TextSize::new(0),

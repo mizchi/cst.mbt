@@ -1,4 +1,5 @@
-///| NodeCache - Caches interned tokens and nodes for sharing
+///|
+/// NodeCache - Caches interned tokens and nodes for sharing
 pub(all) struct NodeCache {
   tokens : @hashmap.HashMap[(SyntaxKind, String), GreenToken]
   nodes : @hashmap.HashMap[(SyntaxKind, Int), GreenNode]
@@ -6,17 +7,14 @@ pub(all) struct NodeCache {
 
 ///|
 pub fn NodeCache::new() -> NodeCache {
-  NodeCache::{
-    tokens: @hashmap.new(),
-    nodes: @hashmap.new(),
-  }
+  NodeCache::{ tokens: @hashmap.new(), nodes: @hashmap.new() }
 }
 
 ///|
 pub fn NodeCache::token(
   self : NodeCache,
   kind : SyntaxKind,
-  text : String
+  text : String,
 ) -> GreenToken {
   let key = (kind, text)
   match self.tokens.get(key) {
@@ -29,19 +27,22 @@ pub fn NodeCache::token(
   }
 }
 
-///| Checkpoint - Marks a position in the builder for later wrapping
+///|
+/// Checkpoint - Marks a position in the builder for later wrapping
 pub(all) struct Checkpoint {
   parent_idx : Int
   child_idx : Int
 } derive(Eq, Show)
 
-///| Parent frame for building nested nodes
+///|
+/// Parent frame for building nested nodes
 pub(all) struct ParentFrame {
   kind : SyntaxKind
   first_child_idx : Int
 }
 
-///| GreenNodeBuilder - Incrementally builds green trees
+///|
+/// GreenNodeBuilder - Incrementally builds green trees
 pub(all) struct GreenNodeBuilder {
   cache : NodeCache
   parents : Array[ParentFrame]
@@ -50,11 +51,7 @@ pub(all) struct GreenNodeBuilder {
 
 ///|
 pub fn GreenNodeBuilder::new() -> GreenNodeBuilder {
-  GreenNodeBuilder::{
-    cache: NodeCache::new(),
-    parents: [],
-    children: [],
-  }
+  GreenNodeBuilder::{ cache: NodeCache::new(), parents: [], children: [] }
 }
 
 ///|
@@ -62,7 +59,8 @@ pub fn GreenNodeBuilder::with_cache(cache : NodeCache) -> GreenNodeBuilder {
   GreenNodeBuilder::{ cache, parents: [], children: [] }
 }
 
-///| Create a checkpoint at current position
+///|
+/// Create a checkpoint at current position
 pub fn GreenNodeBuilder::checkpoint(self : GreenNodeBuilder) -> Checkpoint {
   Checkpoint::{
     parent_idx: self.parents.length(),
@@ -70,20 +68,22 @@ pub fn GreenNodeBuilder::checkpoint(self : GreenNodeBuilder) -> Checkpoint {
   }
 }
 
-///| Start a new node
+///|
+/// Start a new node
 pub fn GreenNodeBuilder::start_node(
   self : GreenNodeBuilder,
-  kind : SyntaxKind
+  kind : SyntaxKind,
 ) -> Unit {
   let frame = ParentFrame::{ kind, first_child_idx: self.children.length() }
   self.parents.push(frame)
 }
 
-///| Start a node at a previous checkpoint position
+///|
+/// Start a node at a previous checkpoint position
 pub fn GreenNodeBuilder::start_node_at(
   self : GreenNodeBuilder,
   checkpoint : Checkpoint,
-  kind : SyntaxKind
+  kind : SyntaxKind,
 ) -> Unit {
   // Insert a new frame that will wrap children from checkpoint position
   let frame = ParentFrame::{ kind, first_child_idx: checkpoint.child_idx }
@@ -91,18 +91,20 @@ pub fn GreenNodeBuilder::start_node_at(
   self.parents.insert(checkpoint.parent_idx, frame)
 }
 
-///| Add a token
+///|
+/// Add a token
 pub fn GreenNodeBuilder::token(
   self : GreenNodeBuilder,
   kind : SyntaxKind,
-  text : String
+  text : String,
 ) -> Unit {
   let green_token = self.cache.token(kind, text)
   let offset = self.current_offset()
   self.children.push(Token(rel_offset=offset, token=green_token))
 }
 
-///| Calculate current offset within the current parent
+///|
+/// Calculate current offset within the current parent
 fn GreenNodeBuilder::current_offset(self : GreenNodeBuilder) -> TextSize {
   let start_idx = if self.parents.is_empty() {
     0
@@ -116,7 +118,8 @@ fn GreenNodeBuilder::current_offset(self : GreenNodeBuilder) -> TextSize {
   offset
 }
 
-///| Finish the current node
+///|
+/// Finish the current node
 pub fn GreenNodeBuilder::finish_node(self : GreenNodeBuilder) -> Unit {
   let frame = match self.parents.pop() {
     Some(f) => f
@@ -153,7 +156,8 @@ pub fn GreenNodeBuilder::finish_node(self : GreenNodeBuilder) -> Unit {
   self.children.push(Node(rel_offset=parent_offset, node~))
 }
 
-///| Finish building and return the root node
+///|
+/// Finish building and return the root node
 pub fn GreenNodeBuilder::finish(self : GreenNodeBuilder) -> GreenNode {
   guard self.parents.is_empty() else {
     abort("finish called with unclosed nodes")

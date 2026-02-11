@@ -1,4 +1,5 @@
-///| TextSize - Represents a position in text (UTF-8 byte offset)
+///|
+/// TextSize - Represents a position in text (UTF-8 byte offset)
 pub(all) struct TextSize {
   raw : UInt
 } derive(Eq, Hash, Show)
@@ -49,7 +50,8 @@ pub impl Compare for TextSize with compare(self : TextSize, other : TextSize) ->
   }
 }
 
-///| TextRange - Represents a span in text [start, end)
+///|
+/// TextRange - Represents a span in text [start, end)
 pub(all) struct TextRange {
   start : TextSize
   end : TextSize

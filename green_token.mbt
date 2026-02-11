@@ -1,4 +1,5 @@
-///| GreenToken - Immutable token in the green tree
+///|
+/// GreenToken - Immutable token in the green tree
 /// Contains syntax kind and the actual text
 pub(all) struct GreenToken {
   kind : SyntaxKind

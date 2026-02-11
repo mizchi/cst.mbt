@@ -2,12 +2,36 @@
 // Input: (let x (+ 1 2))
 
 // Define syntax kinds for S-expressions
-fn root_kind() -> @cst.SyntaxKind { @cst.SyntaxKind::new(10) }
-fn list_kind() -> @cst.SyntaxKind { @cst.SyntaxKind::new(11) }
-fn atom_kind() -> @cst.SyntaxKind { @cst.SyntaxKind::new(12) }
-fn lparen_kind() -> @cst.SyntaxKind { @cst.SyntaxKind::new(13) }
-fn rparen_kind() -> @cst.SyntaxKind { @cst.SyntaxKind::new(14) }
-fn whitespace_kind() -> @cst.SyntaxKind { @cst.SyntaxKind::new(15) }
+
+///|
+fn root_kind() -> @cst.SyntaxKind {
+  @cst.SyntaxKind::new(10)
+}
+
+///|
+fn list_kind() -> @cst.SyntaxKind {
+  @cst.SyntaxKind::new(11)
+}
+
+///|
+fn atom_kind() -> @cst.SyntaxKind {
+  @cst.SyntaxKind::new(12)
+}
+
+///|
+fn lparen_kind() -> @cst.SyntaxKind {
+  @cst.SyntaxKind::new(13)
+}
+
+///|
+fn rparen_kind() -> @cst.SyntaxKind {
+  @cst.SyntaxKind::new(14)
+}
+
+///|
+fn whitespace_kind() -> @cst.SyntaxKind {
+  @cst.SyntaxKind::new(15)
+}
 
 ///|
 fn main {
@@ -15,7 +39,7 @@ fn main {
   let builder = @cst.GreenNodeBuilder::new()
 
   builder.start_node(root_kind())
-  builder.start_node(list_kind())  // (let x (+ 1 2))
+  builder.start_node(list_kind()) // (let x (+ 1 2))
   builder.token(lparen_kind(), "(")
   builder.token(atom_kind(), "let")
   builder.token(whitespace_kind(), " ")
@@ -62,7 +86,9 @@ fn print_tree(node : @cst.SyntaxNode, depth : Int) -> Unit {
       @cst.SyntaxElement::Node(n) => print_tree(n, depth + 1)
       @cst.SyntaxElement::Token(t) => {
         let token_indent = String::make((depth + 1) * 2, ' ')
-        println("\{token_indent}Token(kind=\{t.kind().raw()}, text=\"\{t.text()}\")")
+        println(
+          "\{token_indent}Token(kind=\{t.kind().raw()}, text=\"\{t.text()}\")",
+        )
       }
     }
   }
@@ -80,7 +106,9 @@ fn print_ranges(node : @cst.SyntaxNode, depth : Int) -> Unit {
       @cst.SyntaxElement::Token(t) => {
         let token_indent = String::make((depth + 1) * 2, ' ')
         let r = t.text_range()
-        println("\{token_indent}Token \"\{t.text()}\": [\{r.start().to_int()}, \{r.end().to_int()})")
+        println(
+          "\{token_indent}Token \"\{t.text()}\": [\{r.start().to_int()}, \{r.end().to_int()})",
+        )
       }
     }
   }

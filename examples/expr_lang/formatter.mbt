@@ -1,6 +1,7 @@
 ///| Formatter for expr_lang
 
-///| Formatting context
+///|
+/// Formatting context
 priv struct FormatContext {
   builder : @cst.GreenNodeBuilder
   mut indent : Int
@@ -44,13 +45,14 @@ fn FormatContext::emit_indent(self : FormatContext) -> Unit {
 fn FormatContext::emit_token(
   self : FormatContext,
   kind : @cst.SyntaxKind,
-  text : String
+  text : String,
 ) -> Unit {
   self.emit_indent()
   self.builder.token(kind, text)
 }
 
-///| Format a syntax node
+///|
+/// Format a syntax node
 fn format_node(node : @cst.SyntaxNode, ctx : FormatContext) -> Unit {
   let kind = node.kind()
   ctx.builder.start_node(kind)
@@ -72,7 +74,8 @@ fn format_node(node : @cst.SyntaxNode, ctx : FormatContext) -> Unit {
   ctx.builder.finish_node()
 }
 
-///| Format source file - statements separated by newlines
+///|
+/// Format source file - statements separated by newlines
 fn format_source_file(node : @cst.SyntaxNode, ctx : FormatContext) -> Unit {
   let mut first = true
   for child in node.children() {
@@ -89,7 +92,8 @@ fn format_source_file(node : @cst.SyntaxNode, ctx : FormatContext) -> Unit {
   }
 }
 
-///| Format let statement: let NAME = expr
+///|
+/// Format let statement: let NAME = expr
 fn format_let_stmt(node : @cst.SyntaxNode, ctx : FormatContext) -> Unit {
   for child in node.children() {
     match child {
@@ -129,7 +133,8 @@ fn format_let_stmt(node : @cst.SyntaxNode, ctx : FormatContext) -> Unit {
   }
 }
 
-///| Format function definition: fn NAME(params) { expr }
+///|
+/// Format function definition: fn NAME(params) { expr }
 fn format_fn_def(node : @cst.SyntaxNode, ctx : FormatContext) -> Unit {
   for child in node.children() {
     match child {
@@ -171,7 +176,8 @@ fn format_fn_def(node : @cst.SyntaxNode, ctx : FormatContext) -> Unit {
   }
 }
 
-///| Format parameter list
+///|
+/// Format parameter list
 fn format_param_list(node : @cst.SyntaxNode, ctx : FormatContext) -> Unit {
   let mut first = true
   for child in node.children() {
@@ -200,7 +206,8 @@ fn format_param_list(node : @cst.SyntaxNode, ctx : FormatContext) -> Unit {
   }
 }
 
-///| Format block: { expr } or { newline indent expr newline }
+///|
+/// Format block: { expr } or { newline indent expr newline }
 fn format_block(node : @cst.SyntaxNode, ctx : FormatContext) -> Unit {
   for child in node.children() {
     match child {
@@ -222,14 +229,13 @@ fn format_block(node : @cst.SyntaxNode, ctx : FormatContext) -> Unit {
           ctx.emit_token(kind, t.text())
         }
       }
-      @cst.SyntaxElement::Node(n) => {
-        format_node(n, ctx)
-      }
+      @cst.SyntaxElement::Node(n) => format_node(n, ctx)
     }
   }
 }
 
-///| Format binary expression: expr op expr with spaces around operator
+///|
+/// Format binary expression: expr op expr with spaces around operator
 fn format_binary_expr(node : @cst.SyntaxNode, ctx : FormatContext) -> Unit {
   for child in node.children() {
     match child {
@@ -239,7 +245,10 @@ fn format_binary_expr(node : @cst.SyntaxNode, ctx : FormatContext) -> Unit {
           continue
         }
         // Operators get spaces
-        if kind == plus() || kind == minus() || kind == star() || kind == slash() {
+        if kind == plus() ||
+          kind == minus() ||
+          kind == star() ||
+          kind == slash() {
           ctx.emit_space()
           ctx.emit_token(kind, t.text())
           ctx.needs_space = true
@@ -258,7 +267,8 @@ fn format_binary_expr(node : @cst.SyntaxNode, ctx : FormatContext) -> Unit {
   }
 }
 
-///| Format call expression: NAME(args)
+///|
+/// Format call expression: NAME(args)
 fn format_call_expr(node : @cst.SyntaxNode, ctx : FormatContext) -> Unit {
   for child in node.children() {
     match child {
@@ -279,7 +289,8 @@ fn format_call_expr(node : @cst.SyntaxNode, ctx : FormatContext) -> Unit {
   }
 }
 
-///| Format argument list
+///|
+/// Format argument list
 fn format_arg_list(node : @cst.SyntaxNode, ctx : FormatContext) -> Unit {
   let mut first = true
   for child in node.children() {
@@ -308,7 +319,8 @@ fn format_arg_list(node : @cst.SyntaxNode, ctx : FormatContext) -> Unit {
   }
 }
 
-///| Format parenthesized expression: (expr)
+///|
+/// Format parenthesized expression: (expr)
 fn format_paren_expr(node : @cst.SyntaxNode, ctx : FormatContext) -> Unit {
   for child in node.children() {
     match child {
@@ -325,7 +337,8 @@ fn format_paren_expr(node : @cst.SyntaxNode, ctx : FormatContext) -> Unit {
   }
 }
 
-///| Format expression statement
+///|
+/// Format expression statement
 fn format_expr_stmt(node : @cst.SyntaxNode, ctx : FormatContext) -> Unit {
   for child in node.children() {
     match child {
@@ -342,7 +355,8 @@ fn format_expr_stmt(node : @cst.SyntaxNode, ctx : FormatContext) -> Unit {
   }
 }
 
-///| Format name reference
+///|
+/// Format name reference
 fn format_name_ref(node : @cst.SyntaxNode, ctx : FormatContext) -> Unit {
   for child in node.children() {
     match child {
@@ -357,7 +371,8 @@ fn format_name_ref(node : @cst.SyntaxNode, ctx : FormatContext) -> Unit {
   }
 }
 
-///| Format literal
+///|
+/// Format literal
 fn format_literal(node : @cst.SyntaxNode, ctx : FormatContext) -> Unit {
   for child in node.children() {
     match child {
@@ -372,7 +387,8 @@ fn format_literal(node : @cst.SyntaxNode, ctx : FormatContext) -> Unit {
   }
 }
 
-///| Default formatting - preserve structure but normalize whitespace
+///|
+/// Default formatting - preserve structure but normalize whitespace
 fn format_children_default(node : @cst.SyntaxNode, ctx : FormatContext) -> Unit {
   for child in node.children() {
     match child {
@@ -387,7 +403,8 @@ fn format_children_default(node : @cst.SyntaxNode, ctx : FormatContext) -> Unit 
   }
 }
 
-///| Convert CST to formatted string
+///|
+/// Convert CST to formatted string
 fn green_to_string(node : @cst.GreenNode) -> String {
   let buf = StringBuilder::new()
   collect_text(node, buf)
@@ -404,7 +421,8 @@ fn collect_text(node : @cst.GreenNode, buf : StringBuilder) -> Unit {
   }
 }
 
-///| Format source code string
+///|
+/// Format source code string
 pub fn format(input : String) -> String {
   let cst = parse(input)
   let ctx = FormatContext::new()

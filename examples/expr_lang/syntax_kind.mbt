@@ -1,6 +1,7 @@
 ///| SyntaxKind constants for expr_lang
 
 // Token kinds (1-99)
+
 ///|
 pub fn eof() -> @cst.SyntaxKind {
   @cst.SyntaxKind::new(0)
@@ -92,6 +93,7 @@ pub fn comma() -> @cst.SyntaxKind {
 }
 
 // Node kinds (100+)
+
 ///|
 pub fn source_file() -> @cst.SyntaxKind {
   @cst.SyntaxKind::new(100)
@@ -152,17 +154,20 @@ pub fn literal() -> @cst.SyntaxKind {
   @cst.SyntaxKind::new(111)
 }
 
-///| Check if a SyntaxKind is a token (not a node)
+///|
+/// Check if a SyntaxKind is a token (not a node)
 pub fn is_token(kind : @cst.SyntaxKind) -> Bool {
   kind.raw() < 100
 }
 
-///| Check if a SyntaxKind is trivia (whitespace/newline)
+///|
+/// Check if a SyntaxKind is trivia (whitespace/newline)
 pub fn is_trivia(kind : @cst.SyntaxKind) -> Bool {
   kind == whitespace() || kind == newline()
 }
 
-///| Get the name of a SyntaxKind for debugging
+///|
+/// Get the name of a SyntaxKind for debugging
 pub fn kind_name(kind : @cst.SyntaxKind) -> String {
   match kind.raw() {
     0 => "eof"
