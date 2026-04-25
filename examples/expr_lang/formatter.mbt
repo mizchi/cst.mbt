@@ -78,7 +78,7 @@ fn format_source_file(node : @cst.SyntaxNode, ctx : FormatContext) -> Unit {
   for child in node.children() {
     match child {
       @cst.SyntaxElement::Node(n) => {
-        if not(first) {
+        if !(first) {
           ctx.emit_newline()
         }
         first = false
@@ -185,7 +185,7 @@ fn format_param_list(node : @cst.SyntaxNode, ctx : FormatContext) -> Unit {
           ctx.emit_token(kind, t.text())
           ctx.needs_space = true
         } else if kind == name() {
-          if not(first) && ctx.needs_space {
+          if !(first) && ctx.needs_space {
             ctx.emit_space()
           }
           first = false
@@ -297,7 +297,7 @@ fn format_arg_list(node : @cst.SyntaxNode, ctx : FormatContext) -> Unit {
         }
       }
       @cst.SyntaxElement::Node(n) => {
-        if not(first) && ctx.needs_space {
+        if !(first) && ctx.needs_space {
           ctx.emit_space()
         }
         first = false
@@ -348,7 +348,7 @@ fn format_name_ref(node : @cst.SyntaxNode, ctx : FormatContext) -> Unit {
     match child {
       @cst.SyntaxElement::Token(t) => {
         let kind = t.kind()
-        if not(is_trivia(kind)) {
+        if !(is_trivia(kind)) {
           ctx.emit_token(kind, t.text())
         }
       }
@@ -363,7 +363,7 @@ fn format_literal(node : @cst.SyntaxNode, ctx : FormatContext) -> Unit {
     match child {
       @cst.SyntaxElement::Token(t) => {
         let kind = t.kind()
-        if not(is_trivia(kind)) {
+        if !(is_trivia(kind)) {
           ctx.emit_token(kind, t.text())
         }
       }
@@ -378,7 +378,7 @@ fn format_children_default(node : @cst.SyntaxNode, ctx : FormatContext) -> Unit 
     match child {
       @cst.SyntaxElement::Token(t) => {
         let kind = t.kind()
-        if not(is_trivia(kind)) {
+        if !(is_trivia(kind)) {
           ctx.emit_token(kind, t.text())
         }
       }
