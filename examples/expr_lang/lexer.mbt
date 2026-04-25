@@ -165,7 +165,7 @@ pub fn Lexer::is_eof(self : Lexer) -> Bool {
 pub fn tokenize(input : String) -> Array[Token] {
   let lexer = Lexer::new(input)
   let tokens : Array[Token] = []
-  while not(lexer.is_eof()) {
+  while !(lexer.is_eof()) {
     tokens.push(lexer.next_token())
   }
   tokens.push(Token::new(eof(), ""))

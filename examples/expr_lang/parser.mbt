@@ -67,7 +67,7 @@ fn Parser::expect(self : Parser, kind : @cst.SyntaxKind) -> Unit {
 /// Parse source file
 pub fn Parser::parse(self : Parser) -> @cst.GreenNode {
   self.builder.start_node(source_file())
-  while not(self.at(eof())) {
+  while !(self.at(eof())) {
     self.skip_trivia()
     if self.at(eof()) {
       break
@@ -124,7 +124,7 @@ fn Parser::parse_fn_def(self : Parser) -> Unit {
 fn Parser::parse_params(self : Parser) -> Unit {
   self.builder.start_node(param_list())
   self.skip_trivia()
-  if not(self.at(rparen())) {
+  if !(self.at(rparen())) {
     self.expect(name()) // first param
     while ({
             self.skip_trivia()
@@ -144,7 +144,7 @@ fn Parser::parse_block(self : Parser) -> Unit {
   self.builder.start_node(block())
   self.expect(lbrace()) // {
   self.skip_trivia()
-  if not(self.at(rbrace())) {
+  if !(self.at(rbrace())) {
     self.parse_expr()
   }
   self.skip_trivia()
@@ -220,7 +220,7 @@ fn Parser::parse_call_expr(self : Parser) -> Unit {
 fn Parser::parse_args(self : Parser) -> Unit {
   self.builder.start_node(arg_list())
   self.skip_trivia()
-  if not(self.at(rparen())) {
+  if !(self.at(rparen())) {
     self.parse_expr() // first arg
     while ({
             self.skip_trivia()
@@ -262,7 +262,7 @@ fn Parser::parse_primary_expr(self : Parser) -> Unit {
       // Error recovery: emit error token and skip
       self.builder.start_node(literal())
       self.builder.token(error_kind(), self.peek().text())
-      if not(self.at(eof())) {
+      if !(self.at(eof())) {
         self.pos += 1
       }
       self.builder.finish_node()
