@@ -1,0 +1,14 @@
+name: cst.mbt
+version: 0.1.0
+description: APM dependencies — auto-set via signal detection (skill-selector Phase 1).
+targets:
+  - claude
+dependencies:
+  apm:
+    - mizchi/skills/apm-usage
+    - mizchi/skills/skill-selector
+    - moonbitlang/moonbit-agent-guide/moonbit-agent-guide
+    - mizchi/skills/moonbit-practice
+    - mizchi/skills/gh-fix-ci
+  mcp: []
+scripts: {}

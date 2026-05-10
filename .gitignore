@@ -4,3 +4,8 @@ target/
 target
 .mooncakes/
 .moonagent/
+
+# APM dependencies and deploy targets (regenerable via apm install)
+apm_modules/
+.claude/skills/
+.agents/skills/
