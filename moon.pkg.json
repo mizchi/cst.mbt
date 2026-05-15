@@ -2,5 +2,8 @@
   "import": [
     "moonbitlang/core/immut/array",
     "moonbitlang/core/hashmap"
+  ],
+  "test-import": [
+    "moonbitlang/core/bench"
   ]
 }

@@ -36,9 +36,18 @@ pub(all) struct Checkpoint {
 } derive(Eq, Show)
 
 ///| Parent frame for building nested nodes
+///
+/// `accumulated_len` is the running sum of `text_len()` of the children
+/// pushed into this frame since `start_node`. It lets `current_offset`
+/// run in O(1) — the previous implementation walked all children of the
+/// current frame on every `token` push, which turned the overall build
+/// into O(N^2) for flat parent frames (e.g. a parser's module body that
+/// holds hundreds of top-level declaration nodes plus their interleaved
+/// whitespace / comment tokens).
 pub(all) struct ParentFrame {
   kind : SyntaxKind
   first_child_idx : Int
+  mut accumulated_len : TextSize
 }
 
 ///| GreenNodeBuilder - Incrementally builds green trees
@@ -75,7 +84,11 @@ pub fn GreenNodeBuilder::start_node(
   self : GreenNodeBuilder,
   kind : SyntaxKind
 ) -> Unit {
-  let frame = ParentFrame::{ kind, first_child_idx: self.children.length() }
+  let frame = ParentFrame::{
+    kind,
+    first_child_idx: self.children.length(),
+    accumulated_len: TextSize::zero(),
+  }
   self.parents.push(frame)
 }
 
@@ -85,8 +98,20 @@ pub fn GreenNodeBuilder::start_node_at(
   checkpoint : Checkpoint,
   kind : SyntaxKind
 ) -> Unit {
-  // Insert a new frame that will wrap children from checkpoint position
-  let frame = ParentFrame::{ kind, first_child_idx: checkpoint.child_idx }
+  // Re-sum the accumulated length for the children that will be
+  // wrapped by this retroactive frame. This is O(K) where K is the
+  // number of children between the checkpoint and the current position;
+  // typically small (a single expression's worth of children), unlike
+  // the unbounded walk the old current_offset performed on every token.
+  let mut len = TextSize::zero()
+  for i = checkpoint.child_idx; i < self.children.length(); i = i + 1 {
+    len = len + self.children[i].text_len()
+  }
+  let frame = ParentFrame::{
+    kind,
+    first_child_idx: checkpoint.child_idx,
+    accumulated_len: len,
+  }
   // Insert at the checkpoint's parent position
   self.parents.insert(checkpoint.parent_idx, frame)
 }
@@ -100,20 +125,25 @@ pub fn GreenNodeBuilder::token(
   let green_token = self.cache.token(kind, text)
   let offset = self.current_offset()
   self.children.push(Token(rel_offset=offset, token=green_token))
+  // Maintain the topmost frame's running text length so the next push
+  // can read `current_offset` in O(1).
+  if !self.parents.is_empty() {
+    let top = self.parents.length() - 1
+    self.parents[top].accumulated_len = self.parents[top].accumulated_len +
+      green_token.text_len()
+  }
 }
 
-///| Calculate current offset within the current parent
+///| Calculate current offset within the current parent.
+///
+/// O(1) — the topmost frame caches its accumulated child text length and
+/// `token` / `finish_node` maintain it incrementally.
 fn GreenNodeBuilder::current_offset(self : GreenNodeBuilder) -> TextSize {
-  let start_idx = if self.parents.is_empty() {
-    0
+  if self.parents.is_empty() {
+    TextSize::zero()
   } else {
-    self.parents[self.parents.length() - 1].first_child_idx
+    self.parents[self.parents.length() - 1].accumulated_len
   }
-  let mut offset = TextSize::zero()
-  for i = start_idx; i < self.children.length(); i = i + 1 {
-    offset = offset + self.children[i].text_len()
-  }
-  offset
 }
 
 ///| Finish the current node
@@ -150,7 +180,15 @@ pub fn GreenNodeBuilder::finish_node(self : GreenNodeBuilder) -> Unit {
   }
   let node = GreenNode::new(frame.kind, @array.from_array(fixed_children[:]))
   let parent_offset = self.current_offset()
+  let node_len = node.text_len()
   self.children.push(Node(rel_offset=parent_offset, node~))
+  // Roll the collapsed node's text length into the parent frame so the
+  // outer frame's accumulated_len stays consistent with its child list.
+  if !self.parents.is_empty() {
+    let top = self.parents.length() - 1
+    self.parents[top].accumulated_len = self.parents[top].accumulated_len +
+      node_len
+  }
 }
 
 ///| Finish building and return the root node
