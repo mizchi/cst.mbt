@@ -1,7 +1,8 @@
-///| TextSize - Represents a position in text (UTF-8 byte offset)
+///|
+/// TextSize - Represents a position in text (UTF-8 byte offset)
 pub(all) struct TextSize {
   raw : UInt
-} derive(Eq, Hash, Show)
+} derive(Eq, Hash, Debug)
 
 ///|
 pub fn TextSize::new(raw : UInt) -> TextSize {
@@ -29,17 +30,17 @@ pub fn TextSize::to_int(self : TextSize) -> Int {
 }
 
 ///|
-pub impl Add for TextSize with add(self : TextSize, other : TextSize) -> TextSize {
+pub impl Add for TextSize with fn add(self : TextSize, other : TextSize) -> TextSize {
   TextSize::{ raw: self.raw + other.raw }
 }
 
 ///|
-pub impl Sub for TextSize with sub(self : TextSize, other : TextSize) -> TextSize {
+pub impl Sub for TextSize with fn sub(self : TextSize, other : TextSize) -> TextSize {
   TextSize::{ raw: self.raw - other.raw }
 }
 
 ///|
-pub impl Compare for TextSize with compare(self : TextSize, other : TextSize) -> Int {
+pub impl Compare for TextSize with fn compare(self : TextSize, other : TextSize) -> Int {
   if self.raw < other.raw {
     -1
   } else if self.raw > other.raw {
@@ -49,11 +50,12 @@ pub impl Compare for TextSize with compare(self : TextSize, other : TextSize) ->
   }
 }
 
-///| TextRange - Represents a span in text [start, end)
+///|
+/// TextRange - Represents a span in text [start, end)
 pub(all) struct TextRange {
   start : TextSize
   end : TextSize
-} derive(Eq, Hash, Show)
+} derive(Eq, Hash, Debug)
 
 ///|
 pub fn TextRange::new(start : TextSize, end : TextSize) -> TextRange {

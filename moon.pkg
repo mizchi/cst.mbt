@@ -1,0 +1,8 @@
+import {
+  "moonbitlang/core/immut/array",
+  "moonbitlang/core/hashmap",
+}
+
+import {
+  "moonbitlang/core/bench",
+} for "test"

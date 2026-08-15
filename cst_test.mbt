@@ -1,10 +1,34 @@
 // Test syntax kinds for S-expression
-fn root() -> SyntaxKind { SyntaxKind::new(10) }
-fn list() -> SyntaxKind { SyntaxKind::new(11) }
-fn atom() -> SyntaxKind { SyntaxKind::new(12) }
-fn lparen() -> SyntaxKind { SyntaxKind::new(13) }
-fn rparen() -> SyntaxKind { SyntaxKind::new(14) }
-fn whitespace() -> SyntaxKind { SyntaxKind::new(15) }
+
+///|
+fn root() -> SyntaxKind {
+  SyntaxKind::new(10)
+}
+
+///|
+fn list() -> SyntaxKind {
+  SyntaxKind::new(11)
+}
+
+///|
+fn atom() -> SyntaxKind {
+  SyntaxKind::new(12)
+}
+
+///|
+fn lparen() -> SyntaxKind {
+  SyntaxKind::new(13)
+}
+
+///|
+fn rparen() -> SyntaxKind {
+  SyntaxKind::new(14)
+}
+
+///|
+fn whitespace() -> SyntaxKind {
+  SyntaxKind::new(15)
+}
 
 ///|
 test "SyntaxKind basic operations" {
@@ -46,12 +70,10 @@ test "GreenToken creation" {
 test "GreenNode creation" {
   let token1 = GreenToken::new(atom(), "foo")
   let token2 = GreenToken::new(atom(), "bar")
-  let children = @array.from_array(
-    [
-      GreenChild::Token(rel_offset=TextSize::zero(), token=token1),
-      GreenChild::Token(rel_offset=TextSize::from_int(3), token=token2),
-    ],
-  )
+  let children = @array.from_array([
+    GreenChild::Token(rel_offset=TextSize::zero(), token=token1),
+    GreenChild::Token(rel_offset=TextSize::from_int(3), token=token2),
+  ])
   let node = GreenNode::new(list(), children)
   assert_eq(node.kind(), list())
   assert_eq(node.text_len().to_int(), 6)

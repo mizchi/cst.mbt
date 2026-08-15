@@ -1,0 +1,13 @@
+name = "mizchi/cst"
+
+version = "0.1.7"
+
+readme = "README.mbt.md"
+
+repository = "https://github.com/mizchi/cst.mbt"
+
+license = "Apache-2.0"
+
+keywords = [ "cst", "syntax-tree", "parser" ]
+
+description = "Concrete Syntax Tree library with Red-Green Tree pattern"

@@ -68,5 +68,7 @@ fn run_nested_build(depth : Int, tokens_per_node : Int) -> Int {
 
 ///|
 test "bench builder/nested-100x10" (b : @bench.T) {
-  b.bench(name="builder/nested-100x10", fn() { b.keep(run_nested_build(100, 10)) })
+  b.bench(name="builder/nested-100x10", fn() {
+    b.keep(run_nested_build(100, 10))
+  })
 }
