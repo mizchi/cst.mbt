@@ -1,5 +1,5 @@
 import {
-  "moonbitlang/core/immut/array",
+  "moonbitlang/core/immut/vector",
   "moonbitlang/core/hashmap",
 }
 

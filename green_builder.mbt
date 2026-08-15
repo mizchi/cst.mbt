@@ -7,7 +7,7 @@ pub(all) struct NodeCache {
 
 ///|
 pub fn NodeCache::new() -> NodeCache {
-  NodeCache::{ tokens: @hashmap.new(), nodes: @hashmap.new() }
+  NodeCache::{ tokens: @hashmap.HashMap([]), nodes: @hashmap.HashMap([]) }
 }
 
 ///|
@@ -181,7 +181,7 @@ pub fn GreenNodeBuilder::finish_node(self : GreenNodeBuilder) -> Unit {
     }
     fixed_children.push(fixed)
   }
-  let node = GreenNode::new(frame.kind, @array.from_array(fixed_children[:]))
+  let node = GreenNode::new(frame.kind, @vector.Vector(fixed_children[:]))
   let parent_offset = self.current_offset()
   let node_len = node.text_len()
   self.children.push(Node(rel_offset=parent_offset, node~))
