@@ -70,7 +70,7 @@ test "GreenToken creation" {
 test "GreenNode creation" {
   let token1 = GreenToken::new(atom(), "foo")
   let token2 = GreenToken::new(atom(), "bar")
-  let children = @array.from_array([
+  let children = @vector.Vector([
     GreenChild::Token(rel_offset=TextSize::zero(), token=token1),
     GreenChild::Token(rel_offset=TextSize::from_int(3), token=token2),
   ])

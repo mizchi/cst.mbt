@@ -35,13 +35,13 @@ pub fn GreenChild::kind(self : GreenChild) -> SyntaxKind {
 pub(all) struct GreenNode {
   kind : SyntaxKind
   text_len : TextSize
-  children : @array.T[GreenChild]
+  children : @vector.Vector[GreenChild]
 } derive(Eq, Debug)
 
 ///|
 pub fn GreenNode::new(
   kind : SyntaxKind,
-  children : @array.T[GreenChild],
+  children : @vector.Vector[GreenChild],
 ) -> GreenNode {
   let mut text_len = TextSize::zero()
   for child in children {
@@ -61,7 +61,7 @@ pub fn GreenNode::text_len(self : GreenNode) -> TextSize {
 }
 
 ///|
-pub fn GreenNode::children(self : GreenNode) -> @array.T[GreenChild] {
+pub fn GreenNode::children(self : GreenNode) -> @vector.Vector[GreenChild] {
   self.children
 }
 

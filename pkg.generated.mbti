@@ -4,7 +4,7 @@ package "mizchi/cst"
 import {
   "moonbitlang/core/debug",
   "moonbitlang/core/hashmap",
-  "moonbitlang/core/immut/array",
+  "moonbitlang/core/immut/vector",
 }
 
 // Values
@@ -28,13 +28,13 @@ pub fn GreenChild::text_len(Self) -> TextSize
 pub(all) struct GreenNode {
   kind : SyntaxKind
   text_len : TextSize
-  children : @array.T[GreenChild]
+  children : @vector.Vector[GreenChild]
 } derive(Eq, @debug.Debug)
 pub fn GreenNode::child(Self, Int) -> GreenChild?
-pub fn GreenNode::children(Self) -> @array.T[GreenChild]
+pub fn GreenNode::children(Self) -> @vector.Vector[GreenChild]
 pub fn GreenNode::children_count(Self) -> Int
 pub fn GreenNode::kind(Self) -> SyntaxKind
-pub fn GreenNode::new(SyntaxKind, @array.T[GreenChild]) -> Self
+pub fn GreenNode::new(SyntaxKind, @vector.Vector[GreenChild]) -> Self
 pub fn GreenNode::text_len(Self) -> TextSize
 
 pub(all) struct GreenNodeBuilder {
