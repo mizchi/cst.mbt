@@ -1,9 +1,10 @@
-///| GreenToken - Immutable token in the green tree
+///|
+/// GreenToken - Immutable token in the green tree
 /// Contains syntax kind and the actual text
 pub(all) struct GreenToken {
   kind : SyntaxKind
   text : String
-} derive(Eq, Hash, Show)
+} derive(Eq, Hash, Debug)
 
 ///|
 pub fn GreenToken::new(kind : SyntaxKind, text : String) -> GreenToken {

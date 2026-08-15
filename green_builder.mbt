@@ -1,4 +1,5 @@
-///| NodeCache - Caches interned tokens and nodes for sharing
+///|
+/// NodeCache - Caches interned tokens and nodes for sharing
 pub(all) struct NodeCache {
   tokens : @hashmap.HashMap[(SyntaxKind, String), GreenToken]
   nodes : @hashmap.HashMap[(SyntaxKind, Int), GreenNode]
@@ -6,17 +7,14 @@ pub(all) struct NodeCache {
 
 ///|
 pub fn NodeCache::new() -> NodeCache {
-  NodeCache::{
-    tokens: @hashmap.new(),
-    nodes: @hashmap.new(),
-  }
+  NodeCache::{ tokens: @hashmap.new(), nodes: @hashmap.new() }
 }
 
 ///|
 pub fn NodeCache::token(
   self : NodeCache,
   kind : SyntaxKind,
-  text : String
+  text : String,
 ) -> GreenToken {
   let key = (kind, text)
   match self.tokens.get(key) {
@@ -29,13 +27,15 @@ pub fn NodeCache::token(
   }
 }
 
-///| Checkpoint - Marks a position in the builder for later wrapping
+///|
+/// Checkpoint - Marks a position in the builder for later wrapping
 pub(all) struct Checkpoint {
   parent_idx : Int
   child_idx : Int
-} derive(Eq, Show)
+} derive(Eq, Debug)
 
-///| Parent frame for building nested nodes
+///|
+/// Parent frame for building nested nodes
 ///
 /// `accumulated_len` is the running sum of `text_len()` of the children
 /// pushed into this frame since `start_node`. It lets `current_offset`
@@ -50,7 +50,8 @@ pub(all) struct ParentFrame {
   mut accumulated_len : TextSize
 }
 
-///| GreenNodeBuilder - Incrementally builds green trees
+///|
+/// GreenNodeBuilder - Incrementally builds green trees
 pub(all) struct GreenNodeBuilder {
   cache : NodeCache
   parents : Array[ParentFrame]
@@ -59,11 +60,7 @@ pub(all) struct GreenNodeBuilder {
 
 ///|
 pub fn GreenNodeBuilder::new() -> GreenNodeBuilder {
-  GreenNodeBuilder::{
-    cache: NodeCache::new(),
-    parents: [],
-    children: [],
-  }
+  GreenNodeBuilder::{ cache: NodeCache::new(), parents: [], children: [] }
 }
 
 ///|
@@ -71,7 +68,8 @@ pub fn GreenNodeBuilder::with_cache(cache : NodeCache) -> GreenNodeBuilder {
   GreenNodeBuilder::{ cache, parents: [], children: [] }
 }
 
-///| Create a checkpoint at current position
+///|
+/// Create a checkpoint at current position
 pub fn GreenNodeBuilder::checkpoint(self : GreenNodeBuilder) -> Checkpoint {
   Checkpoint::{
     parent_idx: self.parents.length(),
@@ -79,10 +77,11 @@ pub fn GreenNodeBuilder::checkpoint(self : GreenNodeBuilder) -> Checkpoint {
   }
 }
 
-///| Start a new node
+///|
+/// Start a new node
 pub fn GreenNodeBuilder::start_node(
   self : GreenNodeBuilder,
-  kind : SyntaxKind
+  kind : SyntaxKind,
 ) -> Unit {
   let frame = ParentFrame::{
     kind,
@@ -92,11 +91,12 @@ pub fn GreenNodeBuilder::start_node(
   self.parents.push(frame)
 }
 
-///| Start a node at a previous checkpoint position
+///|
+/// Start a node at a previous checkpoint position
 pub fn GreenNodeBuilder::start_node_at(
   self : GreenNodeBuilder,
   checkpoint : Checkpoint,
-  kind : SyntaxKind
+  kind : SyntaxKind,
 ) -> Unit {
   // Re-sum the accumulated length for the children that will be
   // wrapped by this retroactive frame. This is O(K) where K is the
@@ -116,11 +116,12 @@ pub fn GreenNodeBuilder::start_node_at(
   self.parents.insert(checkpoint.parent_idx, frame)
 }
 
-///| Add a token
+///|
+/// Add a token
 pub fn GreenNodeBuilder::token(
   self : GreenNodeBuilder,
   kind : SyntaxKind,
-  text : String
+  text : String,
 ) -> Unit {
   let green_token = self.cache.token(kind, text)
   let offset = self.current_offset()
@@ -134,7 +135,8 @@ pub fn GreenNodeBuilder::token(
   }
 }
 
-///| Calculate current offset within the current parent.
+///|
+/// Calculate current offset within the current parent.
 ///
 /// O(1) — the topmost frame caches its accumulated child text length and
 /// `token` / `finish_node` maintain it incrementally.
@@ -146,7 +148,8 @@ fn GreenNodeBuilder::current_offset(self : GreenNodeBuilder) -> TextSize {
   }
 }
 
-///| Finish the current node
+///|
+/// Finish the current node
 pub fn GreenNodeBuilder::finish_node(self : GreenNodeBuilder) -> Unit {
   let frame = match self.parents.pop() {
     Some(f) => f
@@ -191,7 +194,8 @@ pub fn GreenNodeBuilder::finish_node(self : GreenNodeBuilder) -> Unit {
   }
 }
 
-///| Finish building and return the root node
+///|
+/// Finish building and return the root node
 pub fn GreenNodeBuilder::finish(self : GreenNodeBuilder) -> GreenNode {
   guard self.parents.is_empty() else {
     abort("finish called with unclosed nodes")

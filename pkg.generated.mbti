@@ -1,0 +1,163 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "mizchi/cst"
+
+import {
+  "moonbitlang/core/debug",
+  "moonbitlang/core/hashmap",
+  "moonbitlang/core/immut/array",
+}
+
+// Values
+
+// Errors
+
+// Types and methods
+pub(all) struct Checkpoint {
+  parent_idx : Int
+  child_idx : Int
+} derive(Eq, @debug.Debug)
+
+pub(all) enum GreenChild {
+  Node(rel_offset~ : TextSize, node~ : GreenNode)
+  Token(rel_offset~ : TextSize, token~ : GreenToken)
+} derive(Eq, @debug.Debug)
+pub fn GreenChild::kind(Self) -> SyntaxKind
+pub fn GreenChild::rel_offset(Self) -> TextSize
+pub fn GreenChild::text_len(Self) -> TextSize
+
+pub(all) struct GreenNode {
+  kind : SyntaxKind
+  text_len : TextSize
+  children : @array.T[GreenChild]
+} derive(Eq, @debug.Debug)
+pub fn GreenNode::child(Self, Int) -> GreenChild?
+pub fn GreenNode::children(Self) -> @array.T[GreenChild]
+pub fn GreenNode::children_count(Self) -> Int
+pub fn GreenNode::kind(Self) -> SyntaxKind
+pub fn GreenNode::new(SyntaxKind, @array.T[GreenChild]) -> Self
+pub fn GreenNode::text_len(Self) -> TextSize
+
+pub(all) struct GreenNodeBuilder {
+  cache : NodeCache
+  parents : Array[ParentFrame]
+  children : Array[GreenChild]
+}
+pub fn GreenNodeBuilder::checkpoint(Self) -> Checkpoint
+pub fn GreenNodeBuilder::finish(Self) -> GreenNode
+pub fn GreenNodeBuilder::finish_node(Self) -> Unit
+pub fn GreenNodeBuilder::new() -> Self
+pub fn GreenNodeBuilder::start_node(Self, SyntaxKind) -> Unit
+pub fn GreenNodeBuilder::start_node_at(Self, Checkpoint, SyntaxKind) -> Unit
+pub fn GreenNodeBuilder::token(Self, SyntaxKind, String) -> Unit
+pub fn GreenNodeBuilder::with_cache(NodeCache) -> Self
+
+pub(all) struct GreenToken {
+  kind : SyntaxKind
+  text : String
+} derive(Eq, Hash, @debug.Debug)
+pub fn GreenToken::kind(Self) -> SyntaxKind
+pub fn GreenToken::new(SyntaxKind, String) -> Self
+pub fn GreenToken::text(Self) -> String
+pub fn GreenToken::text_len(Self) -> TextSize
+
+pub(all) struct NodeCache {
+  tokens : @hashmap.HashMap[(SyntaxKind, String), GreenToken]
+  nodes : @hashmap.HashMap[(SyntaxKind, Int), GreenNode]
+}
+pub fn NodeCache::new() -> Self
+pub fn NodeCache::token(Self, SyntaxKind, String) -> GreenToken
+
+pub(all) struct ParentFrame {
+  kind : SyntaxKind
+  first_child_idx : Int
+  mut accumulated_len : TextSize
+}
+
+pub(all) struct SyntaxData {
+  green : GreenNode
+  parent : SyntaxNode?
+  offset : TextSize
+} derive(Eq, @debug.Debug)
+
+pub(all) enum SyntaxElement {
+  Node(SyntaxNode)
+  Token(SyntaxToken)
+} derive(Eq, @debug.Debug)
+pub fn SyntaxElement::as_node(Self) -> SyntaxNode?
+pub fn SyntaxElement::as_token(Self) -> SyntaxToken?
+pub fn SyntaxElement::kind(Self) -> SyntaxKind
+pub fn SyntaxElement::parent(Self) -> SyntaxNode?
+pub fn SyntaxElement::text_len(Self) -> TextSize
+pub fn SyntaxElement::text_range(Self) -> TextRange
+
+pub(all) struct SyntaxKind {
+  raw : UInt
+} derive(Eq, Hash, @debug.Debug)
+pub fn SyntaxKind::eof() -> Self
+pub fn SyntaxKind::new(UInt) -> Self
+pub fn SyntaxKind::raw(Self) -> UInt
+pub fn SyntaxKind::syntax_error() -> Self
+pub fn SyntaxKind::tombstone() -> Self
+pub impl Compare for SyntaxKind
+
+pub(all) struct SyntaxNode {
+  data : SyntaxData
+} derive(Eq, @debug.Debug)
+pub fn SyntaxNode::child_at(Self, Int) -> SyntaxElement?
+pub fn SyntaxNode::child_nodes(Self) -> Array[Self]
+pub fn SyntaxNode::child_tokens(Self) -> Array[SyntaxToken]
+pub fn SyntaxNode::children(Self) -> Array[SyntaxElement]
+pub fn SyntaxNode::children_count(Self) -> Int
+pub fn SyntaxNode::first_child(Self) -> SyntaxElement?
+pub fn SyntaxNode::first_child_node(Self) -> Self?
+pub fn SyntaxNode::first_child_token(Self) -> SyntaxToken?
+pub fn SyntaxNode::green(Self) -> GreenNode
+pub fn SyntaxNode::kind(Self) -> SyntaxKind
+pub fn SyntaxNode::last_child(Self) -> SyntaxElement?
+pub fn SyntaxNode::new_root(GreenNode) -> Self
+pub fn SyntaxNode::parent(Self) -> Self?
+pub fn SyntaxNode::text_len(Self) -> TextSize
+pub fn SyntaxNode::text_range(Self) -> TextRange
+
+pub(all) struct SyntaxToken {
+  green : GreenToken
+  parent : SyntaxNode
+  offset : TextSize
+} derive(Eq, @debug.Debug)
+pub fn SyntaxToken::green(Self) -> GreenToken
+pub fn SyntaxToken::kind(Self) -> SyntaxKind
+pub fn SyntaxToken::new(GreenToken, SyntaxNode, TextSize) -> Self
+pub fn SyntaxToken::parent(Self) -> SyntaxNode
+pub fn SyntaxToken::text(Self) -> String
+pub fn SyntaxToken::text_len(Self) -> TextSize
+pub fn SyntaxToken::text_range(Self) -> TextRange
+
+pub(all) struct TextRange {
+  start : TextSize
+  end : TextSize
+} derive(Eq, Hash, @debug.Debug)
+pub fn TextRange::at(TextSize, TextSize) -> Self
+pub fn TextRange::contains(Self, TextSize) -> Bool
+pub fn TextRange::contains_range(Self, Self) -> Bool
+pub fn TextRange::empty(TextSize) -> Self
+pub fn TextRange::end(Self) -> TextSize
+pub fn TextRange::is_empty(Self) -> Bool
+pub fn TextRange::len(Self) -> TextSize
+pub fn TextRange::new(TextSize, TextSize) -> Self
+pub fn TextRange::start(Self) -> TextSize
+
+pub(all) struct TextSize {
+  raw : UInt
+} derive(Eq, Hash, @debug.Debug)
+pub fn TextSize::from_int(Int) -> Self
+pub fn TextSize::new(UInt) -> Self
+pub fn TextSize::raw(Self) -> UInt
+pub fn TextSize::to_int(Self) -> Int
+pub fn TextSize::zero() -> Self
+pub impl Add for TextSize
+pub impl Compare for TextSize
+pub impl Sub for TextSize
+
+// Type aliases
+
+// Traits

@@ -1,8 +1,9 @@
-///| SyntaxElement - Either a node or a token in the syntax tree
+///|
+/// SyntaxElement - Either a node or a token in the syntax tree
 pub(all) enum SyntaxElement {
   Node(SyntaxNode)
   Token(SyntaxToken)
-} derive(Eq, Show)
+} derive(Eq, Debug)
 
 ///|
 pub fn SyntaxElement::kind(self : SyntaxElement) -> SyntaxKind {
