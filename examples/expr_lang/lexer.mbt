@@ -76,7 +76,7 @@ fn is_whitespace_char(c : Char) -> Bool {
 
 ///|
 fn Lexer::slice_from(self : Lexer, start : Int) -> String {
-  let buf = StringBuilder::new()
+  let buf = StringBuilder()
   for i = start; i < self.pos; i = i + 1 {
     buf.write_char(self.input[i].to_int().unsafe_to_char())
   }

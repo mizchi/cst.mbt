@@ -406,7 +406,7 @@ fn format_children_default(node : @cst.SyntaxNode, ctx : FormatContext) -> Unit 
 ///|
 /// Convert CST to formatted string
 fn green_to_string(node : @cst.GreenNode) -> String {
-  let buf = StringBuilder::new()
+  let buf = StringBuilder()
   collect_text(node, buf)
   buf.to_string()
 }
